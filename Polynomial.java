@@ -1,3 +1,9 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
 public class Polynomial
 {
   double[] coefficient;
@@ -16,6 +22,53 @@ public class Polynomial
       coefficient[i] = given_coe[i];
       exponent[i] = given_exp[i];
     }
+  }
+  public Polynomial(File f)
+  {
+    try (Scanner sc = new Scanner(f);)
+    {
+      int ind = 0;
+      String line = sc.nextLine();
+      String[] comp = line.split("(?=[+-])");
+      coefficient = new double[comp.length];
+      exponent = new int[comp.length];
+      for(String term : comp)
+      {
+        if(term.contains("x"))
+        {
+          String[] split = term.split("(?=[x])|(?<=x)");
+          if (split.length == 2)
+          {
+            if(split[1].equals("x"))
+            {
+              coefficient[ind] = Double.parseDouble(split[0]);
+              exponent[ind] = 1;
+            }
+            else
+            {
+              coefficient[ind] = 1;
+              exponent[ind] = Integer.parseInt(split[1]);
+            }
+          }
+          else
+          {
+            coefficient[ind] = Double.parseDouble(split[0]);
+            exponent[ind] = Integer.parseInt(split[2]);
+          }
+        }
+        else
+        {
+          coefficient[ind] = Double.parseDouble(term);
+          exponent[ind] = 0;
+        }
+        ind++;
+      }
+    }
+    catch(FileNotFoundException error)
+    {
+      System.out.println("File was not found");
+    }
+
   }
   public Polynomial add(Polynomial given)
   {
@@ -108,6 +161,54 @@ public class Polynomial
         count++;
       }
     }
+    for (int i = 0; i< re_coe.length; i++)
+    {
+      System.out.println("coe: "+re_coe[i]);
+      System.out.println("exp: "+re_exp[i]);
+    }
     return new Polynomial(re_coe,re_exp);
+  }
+  public void saveToFile(String path)
+  {
+    
+    String equation = "";
+    for (int i = 0; i < coefficient.length; i++)
+    {
+      if (exponent[i] != 0)
+      {
+        if (coefficient[i] == 1)
+        {
+          equation += "x";
+        }
+        else if (coefficient[i] == -1)
+        {
+          equation += "-x";
+        }
+        else
+        {
+          if (coefficient[i] > 0 && equation.length() != 0)
+          {
+            equation += '+';
+          }
+          equation += coefficient[i];
+          equation += "x";
+        }
+        if (exponent[i] != 1) equation += exponent[i];
+      }
+      else
+      {
+        if(equation.length() != 0 && coefficient[i] > 0) equation += '+';
+        equation += coefficient[i];
+      }
+    }
+    try
+    {
+      FileWriter writer = new FileWriter(path);
+      writer.write(equation);
+      writer.close();
+    } catch(IOException error)
+    {
+      System.out.println("Failed to write on file");
+    }
   }
 }
