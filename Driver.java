@@ -1,4 +1,3 @@
-import java.io.File;
 
 public class Driver {
     public static void main(String[] args) {
@@ -15,16 +14,7 @@ public class Driver {
 
         Polynomial s = p1.add(p2);
 
-        Polynomial m = s.multiply(p2);
-        System.out.println("p2(0.1) = " + p2.evaluate(0.1));
-        System.out.println("m(0.1) = " + m.evaluate(0.1));
-        System.out.println("truth = " + s.evaluate(0.1) * p2.evaluate(0.1));
         System.out.println("s(0.1) = " + s.evaluate(0.1));
-
-        File file = new File("poly.txt");
-        Polynomial f = new Polynomial(file);
-        System.out.println("f(0.1) = " + f.evaluate(0.1));
-        m.saveToFile("save.txt");
 
         if (s.hasRoot(1))
             System.out.println("1 is a root of s");
