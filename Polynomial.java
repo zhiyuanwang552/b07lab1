@@ -1,4 +1,3 @@
-
 public class Polynomial
 {
   double[] coefficient;
@@ -21,19 +20,39 @@ public class Polynomial
   public Polynomial add(Polynomial given)
   {
     int max_len = Math.max(given.coefficient.length,coefficient.length);
-    double [] sum_coe = new double[max_len];
-    int[] sum_exp = new int[max_len];
-    for (int i = 0; i < max_len; i++)
+    int max_exp = 0;
+    for (int i = 0; i < max_len; i ++)
     {
-      if (i < coefficient.length)
+      if (i < coefficient.length && exponent[i] > max_exp) max_exp = exponent[i];
+      if (i < given.coefficient.length && given.exponent[i] > max_exp) max_exp = given.exponent[i];
+    }
+    double[] temp_coe = new double[max_exp+1];
+    for (int i = 0; i < max_len; i ++)
+    {
+      if (i < coefficient.length )
       {
-        sum_coe[i] += coefficient[i];
-        sum_exp[i] += exponent[i];
+        temp_coe[exponent[i]] += coefficient[i]; 
       }
       if (i < given.coefficient.length)
       {
-        sum_coe[i] += given.coefficient[i];
-        sum_exp[i] += given.exponent[i];
+        temp_coe[given.exponent[i]] += given.coefficient[i];
+      }
+    }
+    int len = 0;
+    for (int i = 0; i < temp_coe.length; i ++)
+    {
+      if (temp_coe[i] != 0) len+=1;
+    }
+    double [] sum_coe = new double[len];
+    int[] sum_exp = new int[len];
+    int index = 0;
+    for (int i = 0; i < temp_coe.length; i++)
+    {
+      if (temp_coe[i] != 0)
+      {
+        sum_coe[index] += temp_coe[i];
+        sum_exp[index] += i;
+        index++;
       }
     }
     return new Polynomial(sum_coe,sum_exp);
@@ -49,10 +68,46 @@ public class Polynomial
   }
   public boolean hasRoot(double x)
   {
-    if (evaluate(x) == 0)
+    return evaluate(x) == 0;
+  }
+
+  public Polynomial multiply(Polynomial given)
+  {
+    int max_exp1 = 0;
+    int max_exp2 = 0;
+    for (int i = 0; i < given.exponent.length; i++)
     {
-      return true;
+      if (given.exponent[i] > max_exp1) max_exp1 = given.exponent[i];
     }
-    return false;
+    for (int i = 0; i < exponent.length; i++)
+    {
+      if (exponent[i] > max_exp2) max_exp2 = exponent[i];
+    }
+    double[] temp_coe = new double[max_exp1 + max_exp2 + 1];
+    for (int i = 0; i < given.exponent.length; i++)
+    {
+      for (int j = 0; j < exponent.length; j++)
+      {
+        temp_coe[given.exponent[i] + exponent[j]] += given.coefficient[i] * coefficient[j];
+      }
+    }
+    int count = 0;
+    for (int i = 0; i < temp_coe.length; i++)
+    {
+      if (temp_coe[i] != 0 ) count++;
+    }
+    double[] re_coe = new double[count];
+    int[] re_exp = new int[count];
+    count = 0;
+    for (int i = 0; i < temp_coe.length; i++)
+    {
+      if (temp_coe[i] != 0 )
+      {
+        re_coe[count] = temp_coe[i];
+        re_exp[count] = i;
+        count++;
+      }
+    }
+    return new Polynomial(re_coe,re_exp);
   }
 }
