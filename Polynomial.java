@@ -1,12 +1,12 @@
-#hi
+
 public class Polynomial
 {
   double[] coefficient;
-  double[] exponent;
+  int[] exponent;
   public Polynomial()
   {
     coefficient = new double[1];
-    exponent = new int[1]
+    exponent = new int[1];
   }
   public Polynomial(double[] given_coe, int [] given_exp)
   {
@@ -36,7 +36,7 @@ public class Polynomial
         sum_exp[i] += given.exponent[i];
       }
     }
-    return new Polynomial(sum);
+    return new Polynomial(sum_coe,sum_exp);
   }
   public double evaluate(double x)
   {
